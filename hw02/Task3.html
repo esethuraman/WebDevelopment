@@ -1,5 +1,8 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
+    <meta charset="utf-8"/>
+    <title> HW02 Task3 </title>
     <style>
 
       h1{
@@ -24,7 +27,7 @@
       }
 
 
-      #poem-name:hover{
+      .poem-name:hover{
         background-color: lightgrey;
       }
 
@@ -54,41 +57,22 @@
     </style>
   </head>
 
-  <script>
-
-    function  displayNinety9(){
-      document.getElementById("lorem_content").style.display ="none";
-      document.getElementById("NinetyNine_content").style.display ="block";
-      document.getElementById("LastThing_content").style.display = "none";
-    }
-    function  displayLorem(){
-      document.getElementById("lorem_content").style.display ="block";
-      document.getElementById("NinetyNine_content").style.display ="none";
-      document.getElementById("LastThing_content").style.display = "none";
-    }
-    function  displayLastThing(){
-      document.getElementById("lorem_content").style.display ="none";
-      document.getElementById("NinetyNine_content").style.display ="none";
-      document.getElementById("LastThing_content").style.display = "block";
-    }
-
-  </script>
-
-  <h1 id="page-title">
-    HW02 Task Three
-  </h1>
-
   <body>
+    <h1 id="page-title">
+      HW02 Task Three
+    </h1>
+
+  
     <div id="left_col">
-      <a href=# onclick="displayLorem()" id="poem-name">
+      <a href=# onclick=displayLorem() class="poem-name">
          Lorem Ipsem
       </a>
       <br>
-      <a href=# onclick=displayNinety9() id="poem-name">
+      <a href=# onclick=displayNinety9() class="poem-name">
          99 Bottles
       </a>
       <br>
-      <a href=# onclick=displayLastThing() id="poem-name">
+      <a href=# onclick=displayLastThing() class="poem-name">
          Last Thing
       </a>
     </div>
@@ -178,6 +162,25 @@
 
     </div>
 
+    <script>
+
+    function  displayNinety9(){
+      document.getElementById("lorem_content").style.display ="none";
+      document.getElementById("NinetyNine_content").style.display ="block";
+      document.getElementById("LastThing_content").style.display = "none";
+    }
+    function  displayLorem(){
+      document.getElementById("lorem_content").style.display ="block";
+      document.getElementById("NinetyNine_content").style.display ="none";
+      document.getElementById("LastThing_content").style.display = "none";
+    }
+    function  displayLastThing(){
+      document.getElementById("lorem_content").style.display ="none";
+      document.getElementById("NinetyNine_content").style.display ="none";
+      document.getElementById("LastThing_content").style.display = "block";
+    }
+
+  </script>
 
   </body>
 </html>
