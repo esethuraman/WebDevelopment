@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <style>
+
+      #num {
+        color: tomato ;
+        max-width: 3%;
+      }
+      #btn{
+          padding: 8px 8px;
+          background-color: lightblue;
+          color: black;
+        }
+    </style>
+
+  </head>
+  <h1 id="num">
+    10
+  </h1>
+  <script>
+    function increment(){
+      var num = document.getElementById("num").innerHTML;
+      document.getElementById("num").innerHTML = parseInt(num)+1;
+    }
+
+    function alertWithNumber(){
+      alert(document.getElementById("num").innerHTML);
+    }
+
+    function appendTheNum(){
+      var newElmnt = document.createElement('p');
+      var currentNumValue = document.getElementById('num').innerHTML;
+      var newTxt = document.createTextNode(currentNumValue);
+      newElmnt.append(newTxt);
+      document.body.appendChild(newElmnt);
+
+    }
+  </script>
+
+    <button type=button onclick=increment() id='btn'> increment </button>
+    <button type=button onclick=alertWithNumber() id='btn'> alert </button>
+    <button type=button onclick=appendTheNum() id='btn'> append </button>
+
+
+</html>
