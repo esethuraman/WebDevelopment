@@ -4,5 +4,6 @@ defmodule CalcTest do
 
   test "greets the world" do
     assert Calc.hello() == :world
+    assert Calc.main() == 4
   end
 end

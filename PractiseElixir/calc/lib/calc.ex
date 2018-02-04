@@ -35,11 +35,21 @@ defmodule Calc do
     if top == "(" do
       optrs_local = stack_map.optrs
       optrs_local = tl optrs_local
-      stack_map = %{stack_map | optrs: optrs_local}
+      %{stack_map | optrs: optrs_local}
     else
       stack_map = subs_expr(stack_map)
       handler_close_parath(stack_map)
     end
+  end
+
+  def get_evaluated_term(stack_map, op1, op2, optr) do 
+      cond do 
+       optr == "/" -> push_opnd(stack_map, div(op2, op1))
+       optr == "*" -> push_opnd(stack_map, (op2 * op1))
+       optr == "-" -> push_opnd(stack_map, (op2 - op1))
+       optr == "+" -> push_opnd(stack_map, (op2 + op1))
+       true -> IO.puts("default") 
+      end 
   end
 
   def subs_expr(stack_map) do
@@ -59,63 +69,31 @@ defmodule Calc do
     
     op1 = get_parsed_value(o1)
     op2 = get_parsed_value(o2)
-    val = (op2 + op1)
     
-    cond do 
-     optr == "/" -> stack_map = push_opnd(stack_map, div(op2, op1))
-     optr == "*" -> stack_map = push_opnd(stack_map, (op2 * op1))
-     optr == "-" -> stack_map = push_opnd(stack_map, (op2 - op1))
-     optr == "+" -> stack_map = push_opnd(stack_map, (op2 + op1))
-     true -> IO.puts("default") 
-    end 
-    
-    stack_map
+    get_evaluated_term(stack_map, op1, op2, optr) 
     
   end
 
   def push_opnd(stack_map, el) do
     updated_opnds = [to_string(el)] ++ stack_map.opnds
     %{stack_map | "opnds": updated_opnds}
-  
   end
 
   def push_optr(stack_map, el) do
       updated_optrs = [to_string(el)] ++ stack_map.optrs
       %{stack_map | optrs: updated_optrs}
   end
-
   
   def pop_elements() do
     IO.puts("TODO")
   end
 
-  def handle_operators(optrs,hi_pri, low_pri, el) do
-    v_top = "_"
-    cond do 
-      Enum.member?(hi_pri, el) ->
-        [el] ++ optrs 
-        v_top = el
-      Enum.member?(low_pri, el) ->
-        if Enum.member?(low_pri, v_top) do
-          [el] ++ optrs 
-          v_top = el
-        else
-          # evaluate
-          [el] ++ optrs 
-      
-        end
-    end
-  end
-
   def get_top_from_stack(stack) do
-    optrs_local = stack.optrs
-    if (length optrs_local)==0 do
+    if (length stack.optrs)==0 do
       nil
     else
-      f = List.first(optrs_local)
-      f
+      List.first(stack.optrs)
     end
-    
   end
 
   def evaluate(lst, stack_map, v_top) do
@@ -164,13 +142,10 @@ defmodule Calc do
                 stack_map = subs_expr(stack_map, el, hi_pri)
                 v_top = get_top_from_stack(stack_map)
 
-                opnds_local = stack_map.opnds
+                #opnds_local = stack_map.opnds
                 stack_map =  push_optr(stack_map, el)
-                v_top = get_top_from_stack(stack_map)
-
-    
-            end
-            
+                v_top = get_top_from_stack(stack_map)    
+            end            
         end
 
       else
@@ -178,6 +153,7 @@ defmodule Calc do
         stack_map = %{stack_map | opnds: opnds_local}
              
       end
+
       lst = tl lst
       evaluate(lst, stack_map, v_top)
     end
@@ -198,24 +174,25 @@ defmodule Calc do
     
     exp = Regex.replace(~r/\(/, exp, "( ")
     exp = Regex.replace(~r/\)/, exp, " )")
-  
-    #Regex.replace(~r/)/, exp, " ( ")
-    exp
   end
   
-
-  def main do 
+  def main() do 
     
     exp = IO.gets("Enter expression ")
-    exp = process_expression(exp)
+    |> process_expression
+    
     lst = Enum.map(String.split(exp, " "), fn(x) -> String.trim(x) end) 
     lst = Enum.filter(lst, fn(x) -> String.length(x) > 0 end)
-    opnds_lst = []
-    optrs_lst = []
-    stack_map = %{opnds: optrs_lst, optrs: optrs_lst}
+    
+    stack_map = %{opnds: [], optrs: []}
     result_stack = evaluate(lst, stack_map, nil)
     
-    IO.puts("AT THE END..")
+    #IO.puts("AT THE END..")
     IO.puts(empty_the_stack(result_stack))
+    main()
+  end
+
+  def hello do 
+    :world
   end
 end
