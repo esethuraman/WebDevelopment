@@ -12,7 +12,6 @@ defmodule Calc do
       :world
 
   """
-
   def get_parsed_value(val) do
     if is_binary(val) do
       String.to_integer(val)
@@ -28,6 +27,26 @@ defmodule Calc do
       subs_expr(stack_map, optr, hi_pri)
     else
       stack_map 
+    end
+  end
+
+  def handler_close_parath(stack_map) do
+    top = stack_map.optrs |> List.first
+    if top == "(" do
+      IO.inspect(" inside open paranethesis ")
+      IO.inspect(" stack before removal : ")
+      IO.inspect(stack_map)
+      optrs_local = stack_map.optrs
+      optrs_local = tl optrs_local
+      stack_map = %{stack_map | optrs: optrs_local}
+      IO.inspect(" stack after removal : ")
+      IO.inspect(stack_map)
+
+    else
+      IO.puts("debug ---->")
+      IO.inspect(stack_map)
+      stack_map = subs_expr(stack_map)
+      handler_close_parath(stack_map)
     end
   end
 
@@ -68,7 +87,7 @@ defmodule Calc do
      optr == "+" -> stack_map = push_opnd(stack_map, (op2 + op1))
      true -> IO.puts("default") 
     end 
-    #IO.puts("AFTER PUSHING ")
+    IO.puts("AFTER PUSHING ")
     #IO.inspect(stack_map)
 
     stack_map
@@ -123,7 +142,7 @@ defmodule Calc do
   end
 
   def evaluate(lst, stack_map, v_top) do
-    all_optrs = [")", "+", "-", "/", "*"]
+    all_optrs = [")", "+", "-", "/", "*", "("]
     hi_pri = ["/", "*"]
     low_pri = ["+", "-"]
 
@@ -134,15 +153,27 @@ defmodule Calc do
       stack_map
     
     else
-      IO.inspect("Start of the evaluation ")
-      IO.inspect(v_top)
-      IO.inspect(stack_map)
+      #IO.inspect("Start of the evaluation ")
+      ##IO.inspect(v_top)
+      #IO.inspect(stack_map)
+      
+      #IO.inspect("List and its contents ")
+      #IO.inspect(lst)
+      #IO.inspect(el)     
       el = List.first(lst)
-     
       if Enum.member?(all_optrs, el) do
-     
+        #IO.inspect("Successfully entered where it has to")
         #optrs = handle_operators(optrs, hi_pri, low_pri, el)
         cond do 
+          String.contains?(el, "(") ->
+            #IO.puts("at least reached here")
+            stack_map = push_optr(stack_map, el)
+            v_top = nil
+
+          String.contains?(el, ")") -> 
+            #IO.puts("reached close parantheses section too ")
+            stack_map = handler_close_parath(stack_map)
+
           Enum.member?(hi_pri, el) ->
             if Enum.member?(hi_pri, v_top) do
               stack_map = subs_expr(stack_map)
@@ -173,17 +204,24 @@ defmodule Calc do
 
                 opnds_local = stack_map.opnds
                 
+                # calling function without decrementing the list coz i dint push oprtr yet
+                # evaluate(lst, stack_map, v_top)
+                
                 # after solving add the queued operator in to stack
-                IO.puts("lemme see the ele :")
-                IO.inspect(stack_map)
+                #IO.puts("lemme see the ele :")
+                #IO.inspect(stack_map)
                 stack_map =  push_optr(stack_map, el)
                 v_top = get_top_from_stack(stack_map)
-                
+
                 # for a closing paranethesis
                 #true -> pop_elements()
+
             end
+            
         end
+
       else
+        IO.puts("reached here instead ")
         opnds_local = [el] ++ stack_map.opnds
         stack_map = %{stack_map | opnds: opnds_local}
         
@@ -192,7 +230,7 @@ defmodule Calc do
          
       end
       lst = tl lst
-      IO.puts("OPTRS")  
+      IO.puts("Reached end OPTRS")  
       IO.inspect(stack_map.optrs)
       evaluate(lst, stack_map, v_top)
     end
@@ -213,6 +251,7 @@ defmodule Calc do
   end
 
   def main do 
+    IO.puts("YOU CAN DO ")
     lst = [1,2,3,4,5,6,7,8,9]
     odds = []
     evens = []
