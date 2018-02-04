@@ -83,10 +83,6 @@ defmodule Calc do
       updated_optrs = [to_string(el)] ++ stack_map.optrs
       %{stack_map | optrs: updated_optrs}
   end
-  
-  def pop_elements() do
-    IO.puts("TODO")
-  end
 
   def get_top_from_stack(stack) do
     if (length stack.optrs)==0 do
@@ -96,79 +92,105 @@ defmodule Calc do
     end
   end
 
+  def get_low_pri_optrs() do
+    ["+", "-"]
+  end
+
+  def get_hi_pri_optrs() do
+    ["*", "/"]
+  end
+  
+  def handler_low_pri_optrs(stack_map, el, v_top) do
+    cond do
+     v_top == nil ->
+      [ push_optr(stack_map, el), get_top_from_stack(stack_map) ]
+
+     Enum.member?(get_low_pri_optrs, v_top) ->
+      stack_map = subs_expr(stack_map)
+      [ push_optr(stack_map, el), get_top_from_stack(stack_map) ]
+    
+     Enum.member?(get_hi_pri_optrs, v_top) ->
+      # evaluate
+      stack_map = subs_expr(stack_map, el, get_hi_pri_optrs)
+      [ push_optr(stack_map, el), get_top_from_stack(stack_map) ]
+    end
+  end
+  
+  def handler_hi_pri_optrs(stack_map, el, v_top) do
+    
+    if Enum.member?(get_hi_pri_optrs, v_top) do
+      stack_map = subs_expr(stack_map)
+      [ push_optr(stack_map, el), get_top_from_stack(stack_map) ]
+    
+    else  
+      optrs_local = [el] ++ stack_map.optrs 
+      [ %{stack_map | optrs: optrs_local} , get_top_from_stack(stack_map) ]
+    end
+  end 
+  
+  def handler_operators(stack_map, el, v_top, hi_pri, low_pri) do
+    cond do 
+      String.contains?(el, "(") ->
+        stack_map = push_optr(stack_map, el)
+        v_top = nil
+
+      String.contains?(el, ")") -> 
+        stack_map = handler_close_parath(stack_map)
+        v_top = get_top_from_stack(stack_map)
+
+      Enum.member?(hi_pri, el) ->
+        result = handler_hi_pri_optrs(stack_map, el, v_top)            
+        stack_map = Enum.at(result, 0)
+        v_top = Enum.at(result, 1)
+
+      Enum.member?(low_pri, el) ->
+        result = handler_low_pri_optrs(stack_map, el, v_top)            
+        stack_map = Enum.at(result, 0)
+        v_top = Enum.at(result, 1)
+    end
+    [stack_map, v_top]
+  end 
+  
+  def get_all_optrs() do 
+    [")", "+", "-", "/", "*", "("]
+  end
+  
+  def handler_lst_elements(lst, stack_map, v_top) do
+    el = List.first(lst)
+  
+    if Enum.member?(get_all_optrs(), el) do
+        result = handler_operators(stack_map, el, v_top, get_hi_pri_optrs, get_low_pri_optrs)
+        stack_map = Enum.at(result, 0)
+        v_top = Enum.at(result, 1)
+
+      else
+        opnds_local = [el] ++ stack_map.opnds
+        stack_map = %{stack_map | opnds: opnds_local}         
+      end
+      [stack_map, v_top]
+  end 
+  
   def evaluate(lst, stack_map, v_top) do
     IO.inspect(stack_map)
     IO.inspect(v_top)
-    all_optrs = [")", "+", "-", "/", "*", "("]
-    hi_pri = ["/", "*"]
-    low_pri = ["+", "-"]
 
     if ((length lst) == 0) do
       stack_map
     
     else
       el = List.first(lst)
-
-      if Enum.member?(all_optrs, el) do
-        cond do 
-          String.contains?(el, "(") ->
-            stack_map = push_optr(stack_map, el)
-            v_top = nil
-
-          String.contains?(el, ")") -> 
-            stack_map = handler_close_parath(stack_map)
-            v_top = get_top_from_stack(stack_map)
-
-          Enum.member?(hi_pri, el) ->
-            if Enum.member?(hi_pri, v_top) do
-              stack_map = subs_expr(stack_map)
-              stack_map =  push_optr(stack_map, el)
-              v_top = get_top_from_stack(stack_map)
-            else  
-              optrs_local = [el] ++ stack_map.optrs 
-              stack_map = %{stack_map | optrs: optrs_local}
-              v_top = get_top_from_stack(stack_map)
-            end
-
-          Enum.member?(low_pri, el) ->
-            cond do
-             v_top == nil ->
-              stack_map = push_optr(stack_map, el)
-              v_top = get_top_from_stack(stack_map)
-
-             Enum.member?(low_pri, v_top) ->
-              stack_map = subs_expr(stack_map)
-              stack_map =  push_optr(stack_map, el)
-              v_top = get_top_from_stack(stack_map)
-            
-              Enum.member?(hi_pri, v_top) ->
-                # evaluate
-                stack_map = subs_expr(stack_map, el, hi_pri)
-                ##v_top = get_top_from_stack(stack_map)
-
-                #opnds_local = stack_map.opnds
-                stack_map =  push_optr(stack_map, el)
-                v_top = get_top_from_stack(stack_map)    
-            end            
-        end
-
-      else
-        opnds_local = [el] ++ stack_map.opnds
-        stack_map = %{stack_map | opnds: opnds_local}
-             
-      end
-
+      result = handler_lst_elements(lst, stack_map, v_top)
+      stack_map = Enum.at(result, 0)
+      v_top = Enum.at(result, 1)
+      
       lst = tl lst
       evaluate(lst, stack_map, v_top)
     end
   end
 
   def empty_the_stack(stack) do
-    optrs_local = stack.optrs
-    opnds_local = stack.opnds
-  
-    if (length optrs_local)==0 do
-      List.first(opnds_local)
+    if (length stack.optrs)==0 do
+      List.first(stack.opnds)
     else 
       empty_the_stack(subs_expr(stack))
     end
@@ -190,8 +212,7 @@ defmodule Calc do
     
     stack_map = %{opnds: [], optrs: []}
     result_stack = evaluate(lst, stack_map, nil)
-    
-    #IO.puts("AT THE END..")
+ 
     IO.puts(empty_the_stack(result_stack))
     main()
   end
