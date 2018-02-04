@@ -97,6 +97,8 @@ defmodule Calc do
   end
 
   def evaluate(lst, stack_map, v_top) do
+    IO.inspect(stack_map)
+    IO.inspect(v_top)
     all_optrs = [")", "+", "-", "/", "*", "("]
     hi_pri = ["/", "*"]
     low_pri = ["+", "-"]
@@ -115,15 +117,17 @@ defmodule Calc do
 
           String.contains?(el, ")") -> 
             stack_map = handler_close_parath(stack_map)
+            v_top = get_top_from_stack(stack_map)
 
           Enum.member?(hi_pri, el) ->
             if Enum.member?(hi_pri, v_top) do
               stack_map = subs_expr(stack_map)
+              stack_map =  push_optr(stack_map, el)
               v_top = get_top_from_stack(stack_map)
             else  
               optrs_local = [el] ++ stack_map.optrs 
               stack_map = %{stack_map | optrs: optrs_local}
-              v_top = el
+              v_top = get_top_from_stack(stack_map)
             end
 
           Enum.member?(low_pri, el) ->
@@ -140,7 +144,7 @@ defmodule Calc do
               Enum.member?(hi_pri, v_top) ->
                 # evaluate
                 stack_map = subs_expr(stack_map, el, hi_pri)
-                v_top = get_top_from_stack(stack_map)
+                ##v_top = get_top_from_stack(stack_map)
 
                 #opnds_local = stack_map.opnds
                 stack_map =  push_optr(stack_map, el)
@@ -173,7 +177,7 @@ defmodule Calc do
   def process_expression(exp) do
     
     exp = Regex.replace(~r/\(/, exp, "( ")
-    exp = Regex.replace(~r/\)/, exp, " )")
+    Regex.replace(~r/\)/, exp, " )")
   end
   
   def main() do 
