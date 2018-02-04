@@ -97,14 +97,15 @@ defmodule Calc do
   def push_opnd(stack_map, el) do
     updated_opnds = [to_string(el)] ++ stack_map.opnds
     %{stack_map | "opnds": updated_opnds}
+  
   end
 
   def push_optr(stack_map, el) do
-    IO.inspect("inside push optr ")
-    IO.inspect(stack_map)
-    IO.inspect(el)
-    updated_optrs = [to_string(el)] ++ stack_map.optrs
-    %{stack_map | optrs: updated_optrs}
+      IO.inspect("inside push optr ")
+      IO.inspect(stack_map)
+      IO.inspect(el)
+      updated_optrs = [to_string(el)] ++ stack_map.optrs
+      %{stack_map | optrs: updated_optrs}
   end
 
   
@@ -161,6 +162,7 @@ defmodule Calc do
       #IO.inspect(lst)
       #IO.inspect(el)     
       el = List.first(lst)
+
       if Enum.member?(all_optrs, el) do
         #IO.inspect("Successfully entered where it has to")
         #optrs = handle_operators(optrs, hi_pri, low_pri, el)
@@ -250,6 +252,20 @@ defmodule Calc do
     end
   end
 
+  def process_expression(exp) do
+    
+    exp = Regex.replace(~r/\(/, exp, "( ")
+    exp = Regex.replace(~r/\)/, exp, " )")
+    
+
+    #IO.inspect("PROCESSED ...")
+    #IO.inspect(exp)
+    
+    #Regex.replace(~r/)/, exp, " ( ")
+    exp
+  end
+  
+
   def main do 
     IO.puts("YOU CAN DO ")
     lst = [1,2,3,4,5,6,7,8,9]
@@ -257,6 +273,7 @@ defmodule Calc do
     evens = []
     #seggregate(lst, odds, evens)
     exp = IO.gets("Enter expression ")
+    exp = process_expression(exp)
     lst = Enum.map(String.split(exp, " "), fn(x) -> String.trim(x) end) 
     #lst = String.split("4 + 3 * 4 - 3 * 5", " ")
     opnds_lst = []
