@@ -97,19 +97,18 @@ defmodule Calc do
      Enum.member?(get_hi_pri_optrs(), v_top) ->
       # evaluate
       stack_map = simplify_expr(stack_map, el, get_hi_pri_optrs())
-      [ push_optr(stack_map, el), get_top_from_stack(stack_map) ]
+      [ push_optr(stack_map, el), el ]
     end
   end
   
   def handler_hi_pri_optrs(stack_map, el, v_top) do
-    
     if Enum.member?(get_hi_pri_optrs(), v_top) do
       stack_map = simplify_expr(stack_map)
       [ push_optr(stack_map, el), get_top_from_stack(stack_map) ]
     
     else  
       optrs_local = [el] ++ stack_map.optrs 
-      [ %{stack_map | optrs: optrs_local} , get_top_from_stack(stack_map) ]
+      [ %{stack_map | optrs: optrs_local} , el ]
     end
   end 
   

@@ -45,5 +45,9 @@ defmodule CalcTest do
   test "negative numbers addition" do
   	assert Calc.eval("(-5 + -4)") == -9
   end
+
+  test "float truncation without parantheses" do
+  	assert Calc.eval("4 * 2 - 3 + 5 / 2 + 9 / 3") == 10
+  end
   
 end
