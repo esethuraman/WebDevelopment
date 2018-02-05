@@ -1,18 +1,24 @@
 defmodule Calc do
   @moduledoc """
   Documentation for Calc.
+  Attributions: 
+    https://elixirschool.com/en/
+    https://hexdocs.pm/elixir/List.html
   """
 
+  # push given operand into the operand stack
   def push_opnd(stack_map, el) do
     updated_opnds = [to_string(el)] ++ stack_map.opnds
     %{stack_map | "opnds": updated_opnds}
   end
 
+  # push given operator into the operator stack
   def push_optr(stack_map, el) do
       updated_optrs = [to_string(el)] ++ stack_map.optrs
       %{stack_map | optrs: updated_optrs}
   end
 
+  # find the topmost value in operator stack
   def get_top_from_stack(stack) do
     if (length stack.optrs)==0 do
       nil
@@ -21,18 +27,22 @@ defmodule Calc do
     end
   end
 
+  # all possible operators
   def get_all_optrs() do 
     [")", "+", "-", "/", "*", "("]
   end
 
+  # low prioriry operators
   def get_low_pri_optrs() do
     ["+", "-"]
   end
 
+  # high prioriry operators
   def get_hi_pri_optrs() do
     ["*", "/"]
   end
   
+  # returns integer representation of given value
   def get_parsed_value(val) do
     if is_binary(val) do
       String.to_integer(val)
@@ -41,6 +51,8 @@ defmodule Calc do
     end
   end
   
+  # simplify the expression until topmost operator in stack is a
+  #  non-high priority operator 
   def simplify_expr(stack_map, optr, hi_pri) do
     if Enum.member?(hi_pri, stack_map.optrs |> List.first) do
       simplify_expr(stack_map)
@@ -50,16 +62,18 @@ defmodule Calc do
     end
   end
 
-  def handler_close_parath(stack_map) do
+  # evaluates the stack till an open paranthesis is popped out
+  def handler_close_paranth(stack_map) do
     
     if stack_map.optrs |> List.first == "(" do
       %{stack_map | optrs: (tl stack_map.optrs)}
     else
       simplify_expr(stack_map)
-      |> handler_close_parath
+      |> handler_close_paranth
     end
   end
 
+  # evaluates the operands based on operator
   def get_evaluated_term(stack_map, op1, op2, optr) do 
       cond do 
        optr == "/" -> push_opnd(stack_map, div(op2, op1))
@@ -69,6 +83,7 @@ defmodule Calc do
       end 
   end
 
+  # evaluate the expression
   def simplify_expr(stack_map) do
     
     o1 = List.first(stack_map.opnds)
@@ -84,6 +99,7 @@ defmodule Calc do
     
   end
 
+  # low priority operators are handled here
   def handler_low_pri_optrs(stack_map, el, v_top) do
     cond do
      v_top == nil ->
@@ -100,6 +116,7 @@ defmodule Calc do
     end
   end
   
+  # high priority operators are handled here
   def handler_hi_pri_optrs(stack_map, el, v_top) do
     if Enum.member?(get_hi_pri_optrs(), v_top) do
       stack_map = simplify_expr(stack_map)
@@ -111,13 +128,14 @@ defmodule Calc do
     end
   end 
   
+  # generic handler for operators
   def handler_operators(stack_map, el, v_top, hi_pri, low_pri) do
     cond do 
       String.contains?(el, "(") ->
         [push_optr(stack_map, el), nil]
         
       String.contains?(el, ")") -> 
-        stack_map = handler_close_parath(stack_map)
+        stack_map = handler_close_paranth(stack_map)
         v_top = get_top_from_stack(stack_map)
         [stack_map, v_top]
 
@@ -131,6 +149,7 @@ defmodule Calc do
     end
   end 
   
+  # processor for all the elements in expression
   def handler_lst_elements(lst, stack_map, v_top) do
     el = List.first(lst)
   
@@ -144,8 +163,8 @@ defmodule Calc do
       end
   end 
   
-  def evaluate(lst, stack_map, v_top) do
-    
+  # evaluates the expression 
+  def evaluate(lst, stack_map, v_top) do  
     if ((length lst) == 0) do
       stack_map
     
@@ -156,6 +175,7 @@ defmodule Calc do
     end
   end
 
+  # evaluates expression until no more operato is left in stack
   def empty_the_stack(stack) do
     if (length stack.optrs)==0 do
       List.first(stack.opnds)
@@ -164,12 +184,14 @@ defmodule Calc do
     end
   end
 
+  # handles space characters around parantheses
   def process_expression(exp) do
     Regex.replace(~r/\(/, exp, "( ")
     |> (
       &Regex.replace(~r/\)/, &1, " )")).()
   end
   
+  # main evaluator
   def eval(exp) do
     exp = process_expression(exp)
     
@@ -184,6 +206,7 @@ defmodule Calc do
 
   end
 
+  # main function
   def main() do 
     IO.gets("Enter expression ")
     |> eval
