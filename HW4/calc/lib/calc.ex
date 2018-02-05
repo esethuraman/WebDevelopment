@@ -33,7 +33,6 @@ defmodule Calc do
     ["*", "/"]
   end
   
-
   def get_parsed_value(val) do
     if is_binary(val) do
       String.to_integer(val)
@@ -192,7 +191,4 @@ defmodule Calc do
     main()
   end
 
-  def hello do 
-    :world
-  end
 end
