@@ -1,0 +1,20 @@
+$('.cclass > a:First > div:First > button:First ').html("done")
+
+ $('.cclass').css({"background" : "blue"});
+    
+    console.log($('.cclass').children('a.first').children('div.first').children('button.first').html());
+
+    console.log($('.delClass').html());
+    $('.delClass').css({"background " : "red"});
+    $('.delClass').html("modifed");
+    // $('.cclass').children('a.first').children('div.first').children('button.first').html("DONE");
+    $('.cclass > a:First > div:First > button:First ').html("done")
+    //console.log($('.cclass').val());
+
+
+    =====
+    entire board: $('.col-sm-3').css({"background":"lightgreen"})
+    =====
+
+    ====
+    replace the content : $('.col-sm-3 > div > a > div > button:contains(k)').text('?')
