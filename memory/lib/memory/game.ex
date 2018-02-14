@@ -4,25 +4,25 @@ defmodule Memory.Game do
     previous: -1,
 		matchesCount: 0,
 		cards_list: getCardsList(),
-		clicksCount: 87686,
-		score: 765,
+		clicksCount: 0,
+		score: 1600,
 		sleepTraker: 1,
     }
   end
 
-  def getCardsList(lst, cardId) do
-  	arr = ["A", "B", "C", "D", "E", "F", "G", "H","A", "B", "C", "D", "E", "F", "G", "H"]
+  def getCardsList(arr, lst, cardId) do
   	if cardId < 16 do
-  		lst = lst ++ [%{id: cardId, actVal: Enum.at(arr, cardId), isShowable: false, isClickable: true}]
-  		getCardsList(lst, cardId+1 )
+  		lst = lst ++ [%{id: cardId, actVal: Enum.at(arr, cardId), isShowable: false, isClickable: true, isMatched: false}]
+  		getCardsList(arr, lst, cardId+1 )
   	else
   		lst
   	end
   end
 
-  def getCardsList() do 
+  def getCardsList() do
+    arr = ~w[A B C D E F G H A B C D E F G H] |> Enum.shuffle
   	lst = []
-  	getCardsList(lst, 0)
+  	getCardsList(arr, lst, 0)
   end
 
   def client_view(game) do
@@ -65,37 +65,53 @@ defmodule Memory.Game do
   def goToSleep(game) do 
 
   	 lst = game.cards_list
- 	 updatedCardsList = Enum.map(lst, fn(x) -> %{actVal: x.actVal, id: x.id, isClickable: false, isShowable: x.isShowable} end)
- 	 IO.puts("GOING TO SLEEP")
-  	 #IO.inspect(updatedCardsList)
+ 	 updatedCardsList = Enum.map(lst, 
+   fn(x) -> %{actVal: x.actVal, id: x.id, isClickable: false, isShowable: x.isShowable, isMatched: x.isMatched} end)
+
   	getCardsUpdatedGame(game, updatedCardsList)
   end
 
-  def wakeFromSleep(game, cardId) do
+  def wakeFromSleep(game) do
+    updatedCardsList = Enum.map(game.cards_list,
+      fn(x) -> 
+        if x.isMatched do
+          x
+        else
+          %{actVal: x.actVal, id: x.id, isClickable: true, isShowable: false, isMatched: x.isMatched}
+        end end)
+      %{
+        previous: -1,
+        matchesCount: game.matchesCount,
+        cards_list: updatedCardsList,
+        clicksCount: game.clicksCount,
+        score: game.score,
+        sleepTraker: 1,
+      } 
+
+  end
+
+  def wakeFromSleepDEL(game, cardId) do
   	 lst = game.cards_list
      cardId = get_parsed_value(cardId)
      previousId = get_parsed_value(game.previous)
-     IO.inspect("PREVIOUSSSS ID")
-     IO.inspect(previousId)
+    
  	  updatedCardsList = Enum.map(lst, 
  	     fn(x) ->
- 	     	cond do 
- 	     	 x.isShowable and ((get_parsed_value(x.id) != cardId) or (get_parsed_value(x.id) != previousId)) ->
- 	     		 %{actVal: x.actVal, id: x.id, isClickable: true, isShowable: x.isShowable}
- 	     	 true ->
- 	     		 %{actVal: x.actVal, id: x.id, isClickable: true, isShowable: false} 
+        current = (get_parsed_value(x.id))
+ 	     	if (x.isShowable and ((current != cardId) and (current != previousId))) do
+ 	     		 %{actVal: x.actVal, id: x.id, isClickable: false, isShowable: true, isMatched: false}
+ 	     	 else
+ 	     		 %{actVal: x.actVal, id: x.id, isClickable: true, isShowable: false, isMatched: false} 
  	 	    end 
  	 	end)
 
- 	 IO.puts("WAKING from SLEEP")
-  	 IO.inspect(updatedCardsList)
   	%{
-        previous: game.previous,
+        previous: -1,
       matchesCount: game.matchesCount,
       cards_list: updatedCardsList,
       clicksCount: game.clicksCount,
       score: game.score,
-      sleepTraker: 0,
+      sleepTraker: 1,
       } 
   end
 	
@@ -111,14 +127,11 @@ defmodule Memory.Game do
   end
 
   def handlerToggleDisplay(game, cardId) do
-  	#IO.inspect("Inside handlerToggleDisplay : ")
-  	#IO.inspect(cardId)
+  	
   	if cardId == %{} do
   		cardId = "0"
   	end
-  	#IO.inspect(cardId)
   	updatedCardsList = game.cards_list;
-  	#IO.inspect(updatedCardsList)
   	if(Enum.at(updatedCardsList, get_parsed_value(cardId)).isClickable) do
   		
 	    %{
@@ -127,7 +140,7 @@ defmodule Memory.Game do
 			cards_list: game.cards_list,
 			clicksCount: game.clicksCount+1,
 			score: game.score-10,
-			sleepTraker: 0,
+			sleepTraker: 1,
   		}  
   	else
   		IO.puts("IT IS UNCLICKABLE")
@@ -135,10 +148,12 @@ defmodule Memory.Game do
   end
 
    def handlerEquivalentCards(game, updatedCardsList, cardId) do
-   		#IO.inspect("Woah equal cards...")
+   		
+      cardId = get_parsed_value(cardId)
+      previousId = get_parsed_value(game.previous)
    		updatedCardsList = Enum.map(updatedCardsList, 
-  		fn(x) -> if (x.id==cardId) do 
-  		%{id: cardId, actVal: Enum.at(game.cards_list, cardId).actVal, isShowable: true, isClickable: false} else x end end)
+  		fn(x) -> if (x.id==cardId) or (x.id==previousId) do 
+  		%{id: cardId, actVal: x.actVal, isShowable: true, isClickable: false, isMatched: true} else x end end)
 
 		%{
 	  		previous: -1,
@@ -146,39 +161,35 @@ defmodule Memory.Game do
 			cards_list: updatedCardsList,
 			clicksCount: game.clicksCount+1,
 			score: game.score-10,
-			sleepTraker: 0,
+			sleepTraker: 1,
   		} 
 	end
 	
 	def handlerNonEquivalentCards(game, updatedCardsList, cardId) do 
 		updatedCardsList = Enum.map(game.cards_list, 
 	  		fn(x) -> if get_parsed_value(x.id)==cardId do 
-	  			%{id: cardId, actVal: Enum.at(game.cards_list,cardId).actVal, isShowable: true, isClickable: false} else x end end)
+	  			%{id: x.id, actVal: x.actVal, isShowable: true, isClickable: false, isMatched: x.isMatched} else x end end)
 		%{	
 	  		previous: -1,
 			matchesCount: game.matchesCount,
 			cards_list: updatedCardsList,
 			clicksCount: game.clicksCount+1,
 			score: game.score-10,
-			sleepTraker: 1,
+			sleepTraker: 0,
   		} 
 	end
 
 
   def isEquivalentCard(game, updatedCardsList, cardId) do
-  	#IO.puts("updatedCardsList ... ")
-  	#IO.inspect(cardId)
-  	#IO.inspect(game.previous)
+  	
   	if cardId == %{} do
   		cardId = "0"
   	end
-  	IO.puts(Enum.at(updatedCardsList, 
-  		get_parsed_value(cardId)).actVal == Enum.at(updatedCardsList, get_parsed_value(game.previous)).actVal)
+  	
   	Enum.at(updatedCardsList, get_parsed_value(cardId)).actVal == Enum.at(updatedCardsList, get_parsed_value(game.previous)).actVal
   end
 
   def handlerSecondCardClick(game, cardId) do
-  	#IO.inspect("second card clickedddd..")
   	updatedCardsList = game.cards_list
   	if isEquivalentCard(game, updatedCardsList, cardId) do
   		handlerEquivalentCards(game, updatedCardsList, cardId)
@@ -193,45 +204,31 @@ defmodule Memory.Game do
 	  	cardId = get_parsed_value(cardId)	
 	  	updatedCardsList = Enum.map(game.cards_list, 
 	  		fn(x) -> if get_parsed_value(x.id)==cardId do 
-	  			%{id: cardId, actVal: Enum.at(game.cards_list,cardId).actVal, isShowable: true, isClickable: false} else x end end)
+	  			%{id: cardId, actVal: 
+          Enum.at(game.cards_list,cardId).actVal, isShowable: true, isClickable: false, isMatched: x.isMatched} else x end end)
 
 	  	if game.previous == -1 do
-	  		IO.inspect("Entered this toggle display first case ");
-	  		  		#IO.inspect("")
-			#IO.inspect(updatedCardsList)
-			game = %{
-		  		previous: get_parsed_value(cardId),
-				matchesCount: game.matchesCount,
-				cards_list: updatedCardsList,
-				clicksCount: game.clicksCount+1,
-				score: game.score-10,
-				sleepTraker: 0,
-	  		}
-        IO.inspect(game)
+	  		
+  			game = %{
+  		  		previous: get_parsed_value(cardId),
+  				matchesCount: game.matchesCount,
+  				cards_list: updatedCardsList,
+  				clicksCount: game.clicksCount+1,
+  				score: game.score-10,
+  				sleepTraker: 1,
+  	  		}
         game
 	  	else
-        IO.puts("SECOND CLICKKKK")
 	  		game = handlerSecondCardClick(game, cardId)
-        IO.inspect(game)
         game
 	  	end
 	else
-			IO.puts("NON clockale")
 	  		game
 	end
   end
 
-  def getCards(game, cardId) do
-  	#IO.inspect("Inside Elixir get card")
-  	#IO.inspect(cardId)
-  	game.cards_list
-  end
-  
-  def displayCard(game, cardId) do
-  	#IO.inspect("REACHED ELIXIR BLOCK FOR CARD DISPLAY " );
-  	#IO.inspect(cardId);
-  	"CCC"
- 	new()
+  def getGameState(game) do 
+    game
   end
 
   def reset_view(game) do

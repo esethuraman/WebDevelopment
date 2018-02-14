@@ -43394,61 +43394,31 @@ var MainClass = function (_React$Component) {
 	_createClass(MainClass, [{
 		key: 'gotView',
 		value: function gotView(view) {
-			//console.log("new view ", view);
+			var _this2 = this;
+
 			this.setState(view.game);
-			// console.log("GOT STATED ...." , view.game)
+
+			if (this.state.sleepTraker == 0) {
+
+				setTimeout(function () {
+					_this2.channel.push("wakeFromSleep", "").receive("ok", _this2.gotView.bind(_this2)).receive("error", function (resp) {
+						console.log("Unable to perform display toggle", resp);
+					});
+				}, 500);
+
+				this.channel.push("goToSleep", "").receive("ok", this.gotView.bind(this)).receive("error", function (resp) {
+					console.log("Unable to perform display toggle", resp);
+				});
+			}
 		}
-
-		//resetGame(){
-		// 	this.setState({
-		// 		previous : -1,
-		// 		cards_list : this.getCardsList(),
-		// 		matchesCount: 0,
-		// 		clicksCount : 0,
-		// 		score : 1160,
-		// 	});
-
-		// 	for(var cardId=0; cardId<16; cardId++){
-		// 		// $(".col-sm-3 > div[id="+cardId+"]").css({"background": "lightblue"});
-		// 		$(".col-sm-3 > div[id="+cardId+"] > button").css({"background":"lightblue"})
-		// 	}
-		// }
-
 	}, {
 		key: 'resetGame',
 		value: function resetGame() {
 			this.channel.push("reset", "").receive("ok", this.gotView.bind(this));
 		}
 	}, {
-		key: 'permuteArray',
-		value: function permuteArray() {
-			var arr = ['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'F', 'F', 'G', 'G', 'H', 'H'];
-			var i = arr.length - 1;
-			// for (; i > 0; i--) {
-			//   const j = Math.floor(Math.random() * (i + 1));
-			//   const tmp = arr[i];
-			//   arr[i] = arr[j];
-			//   arr[j] = tmp;
-			// }
-			return arr;
-		}
-	}, {
-		key: 'getCardsList',
-		value: function getCardsList() {
-			var cardsList = [];
-			var arr = this.permuteArray();
-			for (var i = 0; i < 16; i++) {
-				var tmpMap = { id: i, actVal: arr[i], isShowable: false, isClickable: true };
-				cardsList[i] = tmpMap;
-			}
-			console.log("cards being gotten from REACT JS");
-			return cardsList;
-		}
-	}, {
 		key: 'displayCard',
 		value: function displayCard(val) {
-			//console.log("DISPLLAYAYYYY")
-			//console.log(this.state.cards_list)
 			if (this.state.cards_list.length == 0) {
 				return "???";
 			}
@@ -43456,94 +43426,6 @@ var MainClass = function (_React$Component) {
 				return this.state.cards_list[val].actVal;
 			}
 			return "???";
-		}
-	}, {
-		key: 'setPrevious',
-		value: function setPrevious(val) {
-			this.setState({ previous: val });
-		}
-	}, {
-		key: 'getPreviousId',
-		value: function getPreviousId() {
-			return this.state.previous;;
-		}
-	}, {
-		key: 'getValueForCard',
-		value: function getValueForCard(cardId) {
-
-			return this.state.cards_list[cardId].actVal;
-		}
-	}, {
-		key: 'isEquivalentCard',
-		value: function isEquivalentCard(val) {
-			return this.getValueForCard(this.getPreviousId()) == this.getValueForCard(val);
-		}
-
-		// updateScore(){
-		// 	console.log("I SHOULD NOT HAVE BEEN CALLED....");
-		// 	this.channel.push("updateScore", "")
-		// 		.receive("ok", this.gotView.bind(this))
-		// 		.receive("error", resp => { console.log("Unable to join in update score", resp)});	
-		// }
-		// updateScore(){
-		// 	console.log("update scores function");
-		// 	let updatedScore = this.state.score - 10;
-		// 	this.setState({score : updatedScore});
-		// }
-
-		// incrementClicksCount(){
-		// 	console.log("I SHOULD NOT HAVE BEEN CALLED....");
-		// 	this.channel.push("reset", "")
-		// .receive("ok", this.gotView.bind(this));
-		// 	this.channel.push("incrementClicksCount", "")
-		// 	.receive("ok", this.gotView.bind(this))
-		// 	.receive("error", resp => { console.log("Unable to join in incrementClicksCount", resp)});	
-		// }
-		// incrementClicksCount(){
-		// 	let count = this.state.clicksCount + 1;
-		// 	console.log("Count incremented " + this.state.clicksCount);
-		// 	this.setState({clicksCount : count});
-		// }
-
-	}, {
-		key: 'updatedMatchesCount',
-		value: function updatedMatchesCount() {
-			var count = this.state.matchesCount + 1;
-			this.setState({ matchesCount: count });
-		}
-	}, {
-		key: 'falsifyClickable',
-		value: function falsifyClickable(x) {
-			x.isClickable = false;
-			return x;
-		}
-	}, {
-		key: 'freezeScreen',
-		value: function freezeScreen() {
-			var cardsList = this.state.cards_list;
-			cardsList.map(this.falsifyClickable);
-		}
-	}, {
-		key: 'unfreezeCard',
-		value: function unfreezeCard(currentCard) {
-			// only unfreeze cards that are not yet matched
-			if (!currentCard.isShowable) {
-				currentCard.isClickable = true;
-			}
-			return currentCard;
-		}
-	}, {
-		key: 'unfreezeScreen',
-		value: function unfreezeScreen() {
-			var cards_list = this.state.cards_list;
-			cards_list.map(this.unfreezeCard);
-		}
-	}, {
-		key: 'updateCardColor',
-		value: function updateCardColor(cardId, color) {
-			console.log("color update");
-			console.log(cardId + " ==> " + "\"" + color + "\"");
-			$(".col-sm-3 > div[id=" + cardId + "] > button").css({ "background": color });
 		}
 	}, {
 		key: 'printWinningStatus',
@@ -43562,87 +43444,31 @@ var MainClass = function (_React$Component) {
 			);
 		}
 	}, {
-		key: 'handlerEquivalentCards',
-		value: function handlerEquivalentCards(updatedCardsList, val) {
-			var _this2 = this;
-
-			setTimeout(function () {
-				_this2.unfreezeScreen();
-			}, 500);
-			this.updateCardColor(val, "green");
-			this.updateCardColor(this.getPreviousId(), "green");
-			this.updatedMatchesCount();
-			this.setPrevious(-1);
-			this.freezeScreen();
-		}
-	}, {
-		key: 'handlerNonEquivalentCards',
-		value: function handlerNonEquivalentCards(updatedCardsList, val) {
-			var _this3 = this;
-
-			setTimeout(function () {
-				updatedCardsList[val].isShowable = false;
-				updatedCardsList[val].isClickable = true;
-				updatedCardsList[_this3.getPreviousId()].isClickable = true;
-				updatedCardsList[_this3.getPreviousId()].isShowable = false;
-				_this3.setPrevious(-1);
-				_this3.unfreezeScreen();
-				_this3.setState({ cards_list: updatedCardsList });
-			}, 1000);
-			this.freezeScreen();
-			this.setState({ cards_list: updatedCardsList });
-		}
-	}, {
-		key: 'handlerSecondCardClick',
-		value: function handlerSecondCardClick(val) {
-			var updatedCardsList = this.state.cards_list;
-			if (this.isEquivalentCard(val)) {
-				this.handlerEquivalentCards(updatedCardsList, val);
-			} else {
-				this.handlerNonEquivalentCards(updatedCardsList, val);
-			}
-		}
-	}, {
 		key: 'toggleDisplay',
 		value: function toggleDisplay(val) {
-			var _this4 = this;
 
+			//console.log("Inside toggle display intially ")
+			//console.log(this.state)
 			this.channel.push("toggleDisplay", val).receive("ok", this.gotView.bind(this)).receive("error", function (resp) {
 				console.log("Unable to perform display toggle", resp);
 			});
-			console.log("SLEEP TRACKER ", this.state.sleepTraker);
-			// nsole.log("SLEEEP NEEDED")
-			console.log(this.state);
-			// console.log(this.state.sleepTraker == 1)
-			if (this.state.sleepTraker == 1) {
 
-				setTimeout(function () {
-					_this4.channel.push("wakeFromSleep", val).receive("ok", _this4.gotView.bind(_this4)).receive("error", function (resp) {
-						console.log("Unable to perform display toggle", resp);
-					});
-				}, 1000);
-
-				//console.log("inside sleep tracker 1")
-				this.channel.push("goToSleep", "").receive("ok", this.gotView.bind(this)).receive("error", function (resp) {
-					console.log("Unable to perform display toggle", resp);
-				});
-			} else {
-				//	console.log("na probs . all set")
-			}
+			this.gotView.bind(this);
 		}
 	}, {
 		key: 'renderCard',
-		value: function renderCard(val) {
+		value: function renderCard(val, color) {
 			// console.log("reder card invoked...")
+			// let color = "violet"
 			return _react2.default.createElement(
 				'div',
 				{ className: 'col-sm-3' },
 				_react2.default.createElement(
 					'div',
-					{ className: 'card cclass w-120 h-70', id: val, style: { margin: 10, background: "lightblue" } },
+					{ className: 'card cclass w-120 h-70', id: val, style: { margin: 10, background: color } },
 					_react2.default.createElement(
 						'button',
-						{ className: 'card-text btn btn-primary btn-lg btn-block', onClick: this.toggleDisplay.bind(this, val) },
+						{ className: 'card-text btn btn-primary btn-lg btn-block', style: { background: color }, onClick: this.toggleDisplay.bind(this, val) },
 						_react2.default.createElement(
 							'div',
 							{ className: 'card-body' },
@@ -43659,10 +43485,23 @@ var MainClass = function (_React$Component) {
 			);
 		}
 	}, {
+		key: 'getColorList',
+		value: function getColorList() {
+			var clist = this.state.cards_list;
+
+			var result = clist.map(function (card) {
+				if (card.isMatched) {
+					return "lightgreen";
+				}
+				return "lightblue";
+			});
+
+			return result;
+		}
+	}, {
 		key: 'render',
 		value: function render() {
-			// console.log("display card react js CALLED")
-
+			var colorList = this.getColorList();
 			return _react2.default.createElement(
 				'div',
 				null,
@@ -43670,22 +43509,22 @@ var MainClass = function (_React$Component) {
 				_react2.default.createElement(
 					'div',
 					{ className: 'row' },
-					this.renderCard(0),
-					this.renderCard(1),
-					this.renderCard(2),
-					this.renderCard(3),
-					this.renderCard(4),
-					this.renderCard(5),
-					this.renderCard(6),
-					this.renderCard(7),
-					this.renderCard(8),
-					this.renderCard(9),
-					this.renderCard(10),
-					this.renderCard(11),
-					this.renderCard(12),
-					this.renderCard(13),
-					this.renderCard(14),
-					this.renderCard(15)
+					this.renderCard(0, colorList[0]),
+					this.renderCard(1, colorList[1]),
+					this.renderCard(2, colorList[2]),
+					this.renderCard(3, colorList[3]),
+					this.renderCard(4, colorList[4]),
+					this.renderCard(5, colorList[5]),
+					this.renderCard(6, colorList[6]),
+					this.renderCard(7, colorList[7]),
+					this.renderCard(8, colorList[8]),
+					this.renderCard(9, colorList[9]),
+					this.renderCard(10, colorList[10]),
+					this.renderCard(11, colorList[11]),
+					this.renderCard(12, colorList[12]),
+					this.renderCard(13, colorList[13]),
+					this.renderCard(14, colorList[14]),
+					this.renderCard(15, colorList[15])
 				),
 				_react2.default.createElement(
 					'div',

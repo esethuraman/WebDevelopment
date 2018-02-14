@@ -54,7 +54,7 @@ defmodule MemoryWeb.GamesChannel do
     game = Game.new()
     socket = socket
     |> assign(:game, game)
-    socket = assign(socket, :game, game)
+    #socket = assign(socket, :game, game)
     {:reply, {:ok, %{"game" => Game.client_view(game)}}, socket}
   end
 
@@ -63,24 +63,27 @@ defmodule MemoryWeb.GamesChannel do
     Memory.GameBackup.save(socket.assigns[:name], game)
     socket = socket
     |> assign(:game, game)
-    socket = assign(socket, :game, game)
-    #IO.inspect("From games channel")
-    #IO.inspect(game)
+    
+    {:reply, {:ok, %{"game" => Game.client_view(game)}}, socket}
+  end
+
+  def handle_in("getGameState", payload, socket) do
+    game = Game.getGameState(socket.assigns[:game])
+    socket = socket
+    |> assign(:game, game)
     {:reply, {:ok, %{"game" => Game.client_view(game)}}, socket}
   end
 
   def handle_in("goToSleep", payload,socket) do
     game = Game.goToSleep(socket.assigns[:game])
-    IO.puts("INSIDE SLEEEP/" )
     socket = socket
     |> assign(:game, game)
-    socket = assign(socket, :game, game)
+    #socket = assign(socket, :game, game)
     {:reply, {:ok, %{"game" => Game.client_view(game)}}, socket}
   end
 
-  def handle_in("wakeFromSleep", cardId,socket) do
-    game = Game.wakeFromSleep(socket.assigns[:game], cardId)
-    IO.puts("INSIDE WAKE UP")
+  def handle_in("wakeFromSleep", payload,socket) do
+    game = Game.wakeFromSleep(socket.assigns[:game])
     socket = socket
     |> assign(:game, game)
     socket = assign(socket, :game, game)
