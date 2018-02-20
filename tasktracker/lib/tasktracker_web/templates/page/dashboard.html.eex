@@ -1,0 +1,33 @@
+<div class="container">
+  <%= if @current_user do %>
+    <div class="row">
+      <div class="col">
+        <%= render TasktrackerWeb.TodoView, "form.html",
+            Map.put(assigns, :action, todo_path(@conn, :create)) %>
+      </div>
+    </div>
+  <% end %>
+
+  <h1>Tasks</h1>
+
+  <%= Enum.map @todos, fn todo -> %>
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h6 class="card-title"><%= todo.name %></h6>
+          <p> Assigned by   : <%= todo.user.name %> </p>
+          <p> Assigned to   : <%= todo.assigned_to %> </p>
+          <span>
+            <%= link "Edit Task", to: todo_path(@conn, :edit, todo), class: "btn btn-default btn-xs" %>
+          </span>
+          <span>
+            <%= link "View Task", to: todo_path(@conn, :show, todo), class: "btn btn-default btn-xs" %>
+          </span>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <% end %>
+</div>

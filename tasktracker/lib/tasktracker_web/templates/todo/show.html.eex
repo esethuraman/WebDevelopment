@@ -1,0 +1,41 @@
+<div class="container">
+<h2>Show Todo</h2>
+
+<ul>
+
+  <li>
+    <strong>Task Name:</strong>
+    <%= @todo.name %>
+  </li>
+
+  <li>
+    <strong>Assigned by:</strong>
+    <%= @todo.user.name %>
+  </li>
+
+  <li>
+    <strong>Assigned to:</strong>
+    <%= @todo.assigned_to %>
+  </li>
+
+
+  <li>
+    <strong>Description:</strong>
+    <%= @todo.description %>
+  </li>
+
+  <li>
+    <strong>Minutes Worked:</strong>
+    <%= @todo.hours %>
+  </li>
+
+  <li>
+    <strong>Completed:</strong>
+    <%= @todo.completed %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: todo_path(@conn, :edit, @todo) %></span>
+<span><%= link "Back", to: page_path(@conn, :dashboard) %></span>
+</div>

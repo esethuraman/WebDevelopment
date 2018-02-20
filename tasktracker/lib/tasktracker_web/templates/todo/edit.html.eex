@@ -1,0 +1,7 @@
+<div class="container">
+<h2>Edit Todo</h2>
+
+<%= render "form.html", Map.put(assigns, :action, todo_path(@conn, :update, @todo)) %>
+
+<span><%= link "Dashboard", to: page_path(@conn, :dashboard) %></span>
+</div>
