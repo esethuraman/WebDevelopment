@@ -5,7 +5,7 @@
 
   <li>
     <strong>Task Name:</strong>
-    <%= @todo.name %>
+    <%= @todo.name %>`
   </li>
 
   <li>
@@ -36,6 +36,7 @@
 
 </ul>
 
-<span><%= link "Edit", to: todo_path(@conn, :edit, @todo) %></span>
-<span><%= link "Back", to: page_path(@conn, :dashboard) %></span>
+<span><%= link "Edit", to: todo_path(@conn, :edit, @todo), class: "btn btn-primary btn-xs" %></span>
+<span><%= link "Back", to: page_path(@conn, :dashboard) ,class: "btn btn-primary btn-xs"%></span>
+<span><%= link "Delete", to: todo_path(@conn, :delete, @todo), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
 </div>

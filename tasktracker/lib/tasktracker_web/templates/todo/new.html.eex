@@ -1,4 +1,4 @@
-<h2>New Todo</h2>
+<h2> Task </h2>
 
 <%= render "form.html", Map.put(assigns, :action, todo_path(@conn, :create)) %>
 

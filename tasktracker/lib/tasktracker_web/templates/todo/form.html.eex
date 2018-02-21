@@ -7,7 +7,7 @@
   <% end %>
 
   <div class="form-group">
-    <%= label f, :Task_Name, class: "control-label" %>
+    <%= label f, :Task_Name, class: "control-label text-primary"%>
     <%= text_input f, :name, class: "form-control" %>
     <%= error_tag f, :name %>
   </div>
@@ -20,26 +20,26 @@
 
   <!-- https://hexdocs.pm/phoenix_html/Phoenix.HTML.Form.html#select/4 -->
   <div class="form-group">
-    <%= label f, :assigned_to, class: "control-label" %>
+    <%= label f, :assigned_to, class: "control-label text-primary"%>
     <%= select f, :assigned_to, Enum.map(@all_users, &{&1.name <> " <" <> &1.email <> ">",
      &1.name <> " <" <> &1.email <> ">"}) %>
     <%= error_tag f, :assigned_to %>
   </div>
 
   <div class="form-group">
-    <%= label f, :description, class: "control-label" %>
+    <%= label f, :description, class: "control-label text-primary"%>
     <%= textarea f, :description, class: "form-control" %>
     <%= error_tag f, :description %>
   </div>
 
   <div class="form-group">
-    <%= label f, :minutes, class: "control-label" %>
+    <%= label f, :minutes_worked, class: "control-label text-primary"%>
     <%= number_input f, :hours, class: "form-control", step: 15, min: 0 %>
     <%= error_tag f, :hours %>
   </div>
 
   <div class="form-group">
-    <%= label f, :completed, class: "control-label" %>
+    <%= label f, :completed, class: "control-label text-primary"%>
     <%= checkbox f, :completed, class: "checkbox" %>
     <%= error_tag f, :completed %>
   </div>
