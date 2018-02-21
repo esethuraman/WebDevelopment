@@ -14,3 +14,6 @@ https://github.com/phoenixframework/phoenix/issues/1789
 https://hexdocs.pm/distillery/use-with-phoenix.html
 https://stackoverflow.com/questions/26040493/how-to-show-data-in-a-table-by-using-psql-command-line-interface
 https://github.com/bitwalker/distillery/issues/306
+
+In addition, Professor Nat Tuk's notes, Codebas for Microblog and his classroom lectures contributes to good extent 
+of my code and design
