@@ -9,7 +9,7 @@ defmodule Tasktracker.App.Task do
     field :body, :string
     field :completed, :boolean, default: false
     field :description, :string
-    field :hours_worked, :integer
+    field :hours_worked, :integer, default: 0
     field :name, :string
     field :assigned_by, :string
 

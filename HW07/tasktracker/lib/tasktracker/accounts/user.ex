@@ -7,7 +7,7 @@ defmodule Tasktracker.Accounts.User do
   schema "users" do
     field :email, :string
     field :name, :string
-    field :manager, :integer
+    field :manager, :integer, default: 0
 
     timestamps()
   end
@@ -15,7 +15,7 @@ defmodule Tasktracker.Accounts.User do
   @doc false
   def changeset(%User{} = user, attrs) do
     user
-    |> cast(attrs, [:email, :name])
+    |> cast(attrs, [:email, :name, :manager])
     |> validate_required([:email, :name])
   end
 end

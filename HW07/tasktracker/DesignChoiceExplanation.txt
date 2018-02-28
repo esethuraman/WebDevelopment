@@ -35,5 +35,3 @@ Application workflow:
 	Edit button allows the task to be edited.
 	Tasks can only be deleted by clicking the view button. I am deliberately not allowing the task delete option to be viewed anywhere else. Because, before deleting a task, the user should have fully seen it. 
 	Each task when viewed, is hsown with timer fileds. First time, create button will create a new timer block with start time as current time. Next, clicking "update start time" will update the start time keeping end time as the same. Update end time button is used to update end_time to current time keeping the start_time same as before.
-
-	I have chose to display timing blocks only in the when a task is viewed (clicking a view button). Since those are well related to the individual tasks, I have made this choice.
