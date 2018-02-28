@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <title> Task Tracker Application </title>
+  </head>
+  <body>
+    <div class="container">
+      <div>
+        <div class="page-header">
+          <h1> Task Tracker Application </h1>
+        </div>
+        <!-- session_path(@conn, :create) -->
+        <%= form_tag("/session", method: :post) do %>
+        <div class="form-group">
+          Email
+          <input type="email" name="email" placeholder="username@organization.domain">
+        </div>
+        <div class="form-group">
+          <button class="btn btn-primary"> Log in</button>
+          <%= link "Register", to: user_path(@conn, :new) %>
+        </div>
+        <% end %>
+      </div>
+    </div>
+  </body>
+</html>
