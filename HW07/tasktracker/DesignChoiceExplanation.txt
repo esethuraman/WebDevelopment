@@ -4,15 +4,20 @@ Basic Idea:
 Database details:
 	This application has two tables populated in Postgres:
 	1. Users
-		email, name
+		email, name, manager
 	2. Todos
 		name, assigned_to, description, hours, completed, user_id (assigned_by)
+	3. Timers
+			start_time, end_time, todo_id
+
 
 	The two tables are associated by means of the user_id field in the Users table. It is used as teh task assignee name in the Todos table
 
 	assigned_to: This is declared as string in the database. In order to assign tasks to only valid users, I have chosen the method of showing dropdown list of users from the database. Inspired from JIRA application, the users are displayed in the form of:
 		"user_name" <"user_email_id">
 	This way, it is ensured that users are easily identifiable (using user name) and the users are unqiuely distinguishable from one another (using email id)
+
+	The Todos table shares "has-many" relationship with the Timers table. Because, each todo has multiple timers associated with it.
 
 Session Choices: 
 	The association between sessions is established by means of user_id. Since user_id i indexed, that is being used as refernce for extracting any further data from the table. 
@@ -26,5 +31,9 @@ Application workflow:
 	Once an user account is created, login is page is used to enter the dashboard. 
 	Since this is a light weight application, I wanted to show an overview to the user in the dashboard. So, on top of this dashboard, the tabs for creating a new task is made available.
 	The rest of the dashboard page contains a glimpse of all the tasks with details such as task name, assigned by and assigned to fields.Clicking the view button on each task template will elaborate the task details.
+	The tasks in this page are just the tasks associated with the user. i.e either tasks assigned by him. Otherwise, tasks assigned to him.
 	Edit button allows the task to be edited.
 	Tasks can only be deleted by clicking the view button. I am deliberately not allowing the task delete option to be viewed anywhere else. Because, before deleting a task, the user should have fully seen it. 
+	Each task when viewed, is hsown with timer fileds. First time, create button will create a new timer block with start time as current time. Next, clicking "update start time" will update the start time keeping end time as the same. Update end time button is used to update end_time to current time keeping the start_time same as before.
+
+	I have chose to display timing blocks only in the when a task is viewed (clicking a view button). Since those are well related to the individual tasks, I have made this choice.
