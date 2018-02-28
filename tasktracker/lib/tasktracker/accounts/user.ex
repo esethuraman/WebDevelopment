@@ -7,6 +7,7 @@ defmodule Tasktracker.Accounts.User do
   schema "users" do
     field :email, :string
     field :name, :string
+    field :manager, :integer
 
     timestamps()
   end

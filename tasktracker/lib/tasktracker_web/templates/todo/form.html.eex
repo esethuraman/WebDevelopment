@@ -21,7 +21,10 @@
   <!-- https://hexdocs.pm/phoenix_html/Phoenix.HTML.Form.html#select/4 -->
   <div class="form-group">
     <%= label f, :assigned_to, class: "control-label text-primary"%>
-    <%= select f, :assigned_to, Enum.map(@all_users, &{&1.name <> " <" <> &1.email <> ">",
+    <%= select f, :assigned_to,
+    Enum.map(
+    Enum.filter(@all_users, fn(user) -> (user.manager == @current_user.id) end),
+    &{&1.name <> " <" <> &1.email <> ">",
      &1.name <> " <" <> &1.email <> ">"}) %>
     <%= error_tag f, :assigned_to %>
   </div>

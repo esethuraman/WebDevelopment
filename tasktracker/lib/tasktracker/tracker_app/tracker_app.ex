@@ -18,14 +18,25 @@ defmodule Tasktracker.TrackerApp do
 
   """
   def list_todos do
+  # |> Enum.filter((fn(x) -> (@current_user.name == "raghu") end))
     Repo.all(Todo)
     |> Repo.preload(:user)
   end
 
+
+  def get_todo_by_managerId(managerId) do
+    # todo.user.manager == managerId
+    Repo.all(Todo)
+    |> Repo.preload(:user)
+    |> Enum.filter(fn(todo) -> (todo.user.manager == managerId) end)
+
+  end
+
+
   @doc """
   Gets a single todo.
 
-  Raises `Ecto.NoResultsError` if the Todo does not exist.
+  Raises `Ecto.NoResultsError` if the Todo does not exist
 
   ## Examples
 

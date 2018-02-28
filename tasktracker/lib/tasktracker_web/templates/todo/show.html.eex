@@ -1,5 +1,10 @@
+<script>
+ window.timer_path = "<%= timer_path(@conn, :index) %>";
+ window.todo_id = "<%= @todo.id %>";
+</script>
+
 <div class="container">
-<h2>Show Todo</h2>
+<h2>Show Tasks</h2>
 
 <ul>
 
@@ -36,7 +41,50 @@
 
 </ul>
 
-<span><%= link "Edit", to: todo_path(@conn, :edit, @todo), class: "btn btn-primary btn-xs" %></span>
-<span><%= link "Back", to: page_path(@conn, :dashboard) ,class: "btn btn-primary btn-xs"%></span>
-<span><%= link "Delete", to: todo_path(@conn, :delete, @todo), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
+
+<div>
+  <h2> Time Blocks for this task </h2>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th> Start Time </th>
+        <th>  </th>
+        <th> End Time </th>
+        <th>  </th>
+        <th>  </th>
+      </tr>
+    </thead>
+
+    <%= Enum.map Enum.filter(@tmrs, fn(x) -> x.todo.id == @todo.id end), fn tmr -> %>
+      <tr>
+        <td> <%= tmr.start_time %> </td>
+        <td> <button class = "updateStartTime btn btn-default btn-xs" data-todo-id = "<%= @todo.id  %>" data-timer-id = "<%= tmr.id  %>"  data-end-time = "<%= tmr.end_time  %>">
+          Update Start Time
+        </button> </td>
+        <td> <%= tmr.end_time %> </td>
+        <td> <button class = "updateEndTime btn btn-default btn-xs" data-todo-id = "<%= @todo.id  %>" data-timer-id = "<%= tmr.id  %>"  data-start-time = "<%= tmr.start_time  %>">
+          Update End Time
+        </button> </td>
+
+        <td> <button class = "deleteTimeBlock btn btn-danger btn-xs" data-timer-id = "<%= tmr.id  %>">
+          Delete
+        </button> </td>
+
+      </tr>
+    <% end %>
+
+    <td> <button class = "newtimeblock btn btn-default btn-xs" data-todo-id = "<%= @todo.id  %>" >
+      Create New Time block
+    </button> </td>
+
+  </table>
+
+</div>
+
+  <div>
+    <span><%= link "Edit", to: todo_path(@conn, :edit, @todo), class: "btn btn-primary btn-xs" %></span>
+    <span><%= link "Back", to: page_path(@conn, :dashboard) ,class: "btn btn-primary btn-xs"%></span>
+    <span><%= link "Delete", to: todo_path(@conn, :delete, @todo), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
+  </div>
 </div>

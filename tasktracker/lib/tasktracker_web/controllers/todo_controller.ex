@@ -30,27 +30,30 @@ defmodule TasktrackerWeb.TodoController do
 
   def show(conn, %{"id" => id}) do
     todo = TrackerApp.get_todo!(id)
-    render(conn, "show.html", todo: todo)
+    tmrs = Tasktracker.TaskTracker.list_timers()
+    render(conn, "show.html", todo: todo, tmrs: tmrs)
   end
 
   def edit(conn, %{"id" => id}) do
     todo = TrackerApp.get_todo!(id)
     changeset = TrackerApp.change_todo(todo)
     all_users = Accounts.list_users()
-    render(conn, "edit.html", todo: todo, changeset: changeset, all_users: all_users)
+    tmrs = Tasktracker.TaskTracker.list_timers()
+    render(conn, "edit.html", todo: todo,tmrs: tmrs, changeset: changeset, all_users: all_users)
   end
 
   def update(conn, %{"id" => id, "todo" => todo_params}) do
     todo = TrackerApp.get_todo!(id)
     all_users = Accounts.list_users()
+    tmrs = Tasktracker.TaskTracker.list_timers()
     case TrackerApp.update_todo(todo, todo_params) do
-      
+
       {:ok, todo} ->
         conn
         |> put_flash(:info, "Todo updated successfully.")
         |> redirect(to: todo_path(conn, :show, todo))
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", todo: todo, changeset: changeset, all_users: all_users)
+        render(conn, "edit.html", todo: todo,tmrs: tmrs, changeset: changeset, all_users: all_users)
     end
   end
 

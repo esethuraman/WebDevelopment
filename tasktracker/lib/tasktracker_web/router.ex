@@ -38,4 +38,10 @@ defmodule TasktrackerWeb.Router do
   # scope "/api", TasktrackerWeb do
   #   pipe_through :api
   # end
+
+  scope "/api/v1", TasktrackerWeb do
+    pipe_through :api
+    resources "/timers", TimerController, except: [:new, :edit]
+  end
+
 end

@@ -1,16 +1,46 @@
 <div class="container">
   <%= if @current_user do %>
+
     <div class="row">
       <div class="col">
-        <%= render TasktrackerWeb.TodoView, "form.html",
-            Map.put(assigns, :action, todo_path(@conn, :create)) %>
+      <%= render TasktrackerWeb.TodoView, "form.html",
+          Map.put(assigns, :action, todo_path(@conn, :create)) %>
       </div>
     </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th> Manager </th>
+        </tr>
+      </thead>
+      <%= Enum.map Enum.filter(@all_users, fn(x) -> x.id == @current_user.manager end), fn user -> %>
+        <tr>
+          <td> <%= user.name %> </td>
+        </tr>
+      <% end %>
+    </table>
+
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th> Underlings </th>
+        </tr>
+      </thead>
+
+      <%= Enum.map Enum.filter(@all_users, fn(x) -> x.manager == @current_user.id end), fn user -> %>
+        <tr>
+          <td> <%= user.name %> </td>
+        </tr>
+      <% end %>
+    </table>
+
   <% end %>
 
-  <h1>Tasks</h1>
+  <h1>Tasks Assigned by <%= @current_user.name %> </h1>
 
-  <%= Enum.map @todos, fn todo -> %>
+  <%= Enum.map Enum.filter(@todos, fn(x) -> x.user.id == @current_user.id end), fn todo -> %>
   <div class="row">
     <div class="col">
       <div class="card">
@@ -34,5 +64,32 @@
     </div>
   </div>
   <% end %>
-  
+
+  <h1>Tasks Assigned to <%= @current_user.name %> </h1>
+
+  <%= Enum.map Enum.filter(@todos, fn(x) -> (String.contains?(x.assigned_to, @current_user.name)) end), fn todo -> %>
+  <div class="row">
+    <div class="col">
+      <div class="card">
+          <div class="card-body">
+
+          <h3 class="page-header bg-light text-info"><%= todo.name %></h3>
+          <div class="panel panel-default">
+          <div class="panel panel-heading">
+          <p class="lead"> Assigned by   : <%= todo.user.name %> </p>
+          <p class="lead"> Assigned to   : <%= todo.assigned_to %> </p>
+          <span>
+            <%= link "Edit Task", to: todo_path(@conn, :edit, todo), class: "btn btn-primary btn-xs" %>
+          </span>
+          <span>
+            <%= link "View Task", to: todo_path(@conn, :show, todo), class: "btn btn-primary btn-xs" %>
+          </span>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% end %>
+
 </div>
