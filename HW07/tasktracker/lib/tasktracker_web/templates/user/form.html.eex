@@ -20,7 +20,7 @@
 
   <div class="form-group">
     <%= label f, :manager, class: "control-label" %>
-    <%= select f, :manager, Enum.map(@users, &{&1.name <> " <" <> &1.email <> ">", &1.id}) %>
+    <%= select f, :manager, ["None"] ++ Enum.map(@users, &{&1.name <> " <" <> &1.email <> ">", &1.id}) %>
     <%= error_tag f, :manager %>
   </div>
 
