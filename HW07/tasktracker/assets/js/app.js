@@ -44,6 +44,7 @@ function onNewTimeBlockClick(ev){
   let btn = $(ev.target);
   let todo_id = btn.data('todo-id');
   createNewTimeBlock(todo_id);
+  location.reload()
 }
 
 function updateStartTime(todo_id, timer_id, end_time){
@@ -74,6 +75,7 @@ function onUpdateStartTimeClick(ev){
   let timer_id = btn.data('timer-id');
   let end_time = btn.data('end-time');
   updateStartTime(todo_id, timer_id, end_time);
+  location.reload()
 }
 
 
@@ -104,6 +106,8 @@ function onUpdateEndTimeClick(ev){
   let timer_id = btn.data('timer-id');
   let start_time = btn.data('start-time');
   updateStartTime(todo_id, timer_id, start_time);
+
+  location.reload()
 }
 
 function onDeleteClick(ev){
@@ -119,6 +123,8 @@ function onDeleteClick(ev){
     success: (resp) => { console.log(resp); },
     error: (resp) => { console.log(resp); },
   });
+
+  location.reload()
 }
 
 function init(){
@@ -129,6 +135,7 @@ function init(){
   $('.updateEndTime').click(onUpdateEndTimeClick)
   console.log("Hello1");
   $('.deleteTimeBlock').click(onDeleteClick)
+
 }
 
 
