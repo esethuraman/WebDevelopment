@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Button, Col, Row, FormGroup, Label, Input } from 'reactstrap';
+import { Link } from 'react-router-dom';
 import api from '../api';
 
 function RegisterForm(params) {
@@ -50,7 +51,7 @@ function RegisterForm(params) {
         </Input>
       </FormGroup>
 
-      <Button onClick={submit}>Register Me</Button>
+      <Link to="/" className="btn btn-primary" onClick={submit}> Register Me </Link>
       
     </div>);
 }

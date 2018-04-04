@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Button, Col, Row, FormGroup, Label, Input } from 'reactstrap';
 import api from '../api';
 
-function TaskForm(params) {
+function TaskEditForm(params) {
 
   function update(ev) {
     let tgt = $(ev.target);
@@ -28,7 +28,7 @@ function TaskForm(params) {
 
   function submit(ev) {
     console.log("Should create Task.");
-    console.log(params.form);
+    console.log(params);
     api.submit_task(params.form);
   }
 
@@ -36,16 +36,6 @@ function TaskForm(params) {
     params.dispatch({
       type: 'CLEAR_FORM',
     });
-  }
-
-  function getButtonLabel(){
-    console.log("Getting button label..");
-    if((params.form.name != null) && (params.form.name.length != 0)){
-      return "Update Task";
-    }
-    else{
-      return "Create Task";
-    }
   }
 
   let users = _.map(params.users, (uu) => <option key={uu.id} value={uu.id}>{uu.name}</option>);
@@ -86,12 +76,14 @@ function TaskForm(params) {
     </FormGroup>
 
     <FormGroup>
-      <Label for="Completed" style={{marginRight: "2ex"}}>Completed</Label>
+      <Label for="Completed">Completed</Label>
       <Input type="checkbox" name="completed" value={params.form.completed} onChange={update}/>
 
     </FormGroup>
 
-    <Button onClick={submit}> Create/Update Task </Button>
+
+
+    <Button onClick={submit}>Create Task</Button>
     <Button onClick={clear}>Clear</Button>
 
   </div>;
@@ -100,7 +92,7 @@ function TaskForm(params) {
 
 function state2props(state) {
   //console.log("rerender", state);
-  return { form: state.form , users: state.users};
+  return { form: state.form };
 }
 
 // Export the result of a curried function call.

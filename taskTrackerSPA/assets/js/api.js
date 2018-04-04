@@ -9,7 +9,7 @@ class TheServer {
       success: (resp) => {
         store.dispatch({
           type: 'TASKS_LIST',
-          posts: resp.data,
+          tasks: resp.data,
         });
       },
     });
@@ -26,7 +26,7 @@ class TheServer {
       dataType: "json",
       contentType: "application/json; charset=UTF-8",
       success: (resp) => {
-        
+        this.request_tasks();
       },
       error: (resp) => {
     

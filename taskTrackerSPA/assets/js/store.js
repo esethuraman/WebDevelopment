@@ -17,9 +17,11 @@ import deepFreeze from 'deep-freeze';
 function tasks(state = [], action) {
   switch (action.type) {
   case 'TASKS_LIST':
-    return [...action.posts];
+    console.log("TASKS LIST")
+    return [...action.tasks];
   case 'ADD_TASK':
-    return [action.post, ...state];
+    console.log("ADD TASL")
+    return [action.task, ...state];
   default:
     return state;
   }
