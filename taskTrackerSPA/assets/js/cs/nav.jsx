@@ -1,10 +1,11 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { Form, FormGroup, NavItem, Input, Button } from 'reactstrap';
 import { connect } from 'react-redux';
 import api from '../api';
 
 let LoginForm = connect(({login}) => {return {login};})((props) => {
+
   function update(ev) {
     let tgt = $(ev.target);
     let data = {};
@@ -18,7 +19,6 @@ let LoginForm = connect(({login}) => {return {login};})((props) => {
   function create_token(ev) {
     let params = {email: props.login.email, pass: props.login.pass};
     api.submit_login(params);
-    console.log(params);
   }
 
   return <div className="navbar-text">
@@ -33,17 +33,18 @@ let LoginForm = connect(({login}) => {return {login};})((props) => {
       </FormGroup>
       <Button onClick={create_token}>Log In</Button>
     </Form>
+
   </div>;
 });
 
 let Session = connect(({token}) => {return {token};})((props) => {
   return <div className="navbar-text">
-    User id = { props.token.user_id }
+    User id = { props.token.user_name }
   </div>;
 });
 
-function loggedInNavContents(){
-    console.log("logged in stuuff..");  
+
+function loggedInNavContents(props){ 
     return(
       <div>
         <ul className="navbar-nav mr-auto">
@@ -64,7 +65,7 @@ function registerNavContents(){
       <div>
         <ul className="navbar-nav mr-auto">
           <NavItem>
-            <NavLink to="/createUser" exact={true} activeClassName="active" className="nav-link">Register New User</NavLink>
+            <NavLink to="/createUser" exact={true} style={{marginRight: "4ex"}} activeClassName="active" className="nav-link">Register New User</NavLink>
           </NavItem>
           
         </ul>
@@ -74,7 +75,7 @@ function registerNavContents(){
 
 function renderNavBarContents(props){
     if (props.token){
-      return loggedInNavContents();
+      return loggedInNavContents(props);
     }
     else{
       return registerNavContents();
@@ -83,8 +84,7 @@ function renderNavBarContents(props){
 }
 function Nav(props) {
   let session_info;
-  console.log("====")
-  console.log(props)
+ 
   if (props.token) {
     session_info = <Session token={props.token} />;
   }

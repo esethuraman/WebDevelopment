@@ -21,35 +21,40 @@ export default function taskTracker_init(store) {
 
 let TaskTracker = connect((state) => state)((props) => {
   
-  function createUserPage(){
-    return (
-    <div style={{padding: "4ex"}}>
-        <h2>Create New</h2>
-
-        <FormGroup>
-          <Label for="Task Title">Task Title</Label>
-          <Input type="textarea" name="name"  value={props.form.name} onChange={update}/>
-        </FormGroup>
-
-        <FormGroup>
-          <Label for="assigned_to"> Assign To</Label>
-          <Input type="select" name="assigned_to"  value={props.form.assigned_to} onChange={update}>
-            { users }
-          </Input>
-        </FormGroup>
-      </div>
-    );
-  }
+  let comp;
+  if(props.token){
     
+       comp= <div>
+                <p>  To Sign out, please reload the page </p>
+                <br/>
+                <TaskForm users={props.users} />
+                <Feed tasks={props.tasks} users={props.users}/>
+              </div>;
+  }
+  else{
+    
+     comp= <div>
+        <h2> Single page Task Tracker Application </h2>
+        <br/>
+        <h3> If you are an Existing user, please login </h3>
+        <br/>
+        <h3> If you are a New User, please register yourself</h3>
+        <br/>
+        <h3> Happy Task Tracking !</h3>
+        <br/>
+      </div>;
+
+  }
+
+
   return (
     <Router>  
       <div>
         <Nav />
         <Route path="/" exact={true} render={() =>
-          <div>
-            <TaskForm users={props.users} />
-            <Feed tasks={props.tasks} />
-          </div>
+           <div>
+                {comp}
+            </div>  
         } />
 
         <Route path="/createUser" render={(props) => 

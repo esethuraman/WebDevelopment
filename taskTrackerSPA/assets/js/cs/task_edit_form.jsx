@@ -30,6 +30,7 @@ function TaskEditForm(params) {
     console.log("Should create Task.");
     console.log(params);
     api.submit_task(params.form);
+    clear();
   }
 
   function clear(ev) {

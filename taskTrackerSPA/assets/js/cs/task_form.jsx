@@ -29,7 +29,24 @@ function TaskForm(params) {
   function submit(ev) {
     console.log("Should create Task.");
     console.log(params.form);
-    api.submit_task(params.form);
+    if(params.form.name.length == 0){
+      alert("Please Enter a name for task");
+    }
+    else if(params.form.minutes_worked%15 != 0){
+      alert("Please enter minutes worked only as a multiple of 15");
+    }
+    else if (params.form.description.length == 0){
+      alert("Please enter a task description");
+    }
+    else if (params.form.assigned_to.length == 0){
+      alert("Please select a valid user from the dropdown list");
+    }
+
+    else{
+      api.submit_task(params.form); 
+      clear(); 
+    }
+    
   }
 
   function clear(ev) {
@@ -49,12 +66,13 @@ function TaskForm(params) {
   }
 
   let users = _.map(params.users, (uu) => <option key={uu.id} value={uu.id}>{uu.name}</option>);
+
   return <div style={{padding: "4ex"}}>
     <h2>Create New</h2>
 
     <FormGroup>
       <Label for="Task Title">Task Title</Label>
-      <Input type="textarea" name="name"  value={params.form.name} onChange={update}/>
+      <Input type="text" name="name"  value={params.form.name} onChange={update}/>
     </FormGroup>
 
     <FormGroup>
@@ -66,7 +84,7 @@ function TaskForm(params) {
 
     <FormGroup>
       <Label for="assigned_by"> Assigned By</Label>
-      <Input type="number" name="user_id"  value={params.form.user_id} onChange={update}>
+      <Input type="number" name="user_id"  value={params.form.user_id} readOnly>
       </Input>
     </FormGroup>
 
@@ -91,8 +109,8 @@ function TaskForm(params) {
 
     </FormGroup>
 
-    <Button onClick={submit}> Create/Update Task </Button>
-    <Button onClick={clear}>Clear</Button>
+    <Button onClick={submit} style={{marginRight: "2ex"}}> Create/Update Task </Button>
+    <Button onClick={clear} style={{marginLeft: "2ex"}}>Clear</Button>
 
   </div>;
 }

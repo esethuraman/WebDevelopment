@@ -64,9 +64,7 @@ class TheServer {
         this.request_tasks();
       },
       error: (resp) => {
-        console.log("ERRROORRRR IN SUBMITTING TASK ... ");
-        console.log(data);
-        console.log(resp);
+        
       },
     });
   }
@@ -85,9 +83,7 @@ class TheServer {
         });
       },
       error: (resp) => {
-        console.log("ERRROORRRR IN SUBMITTING USER ... ");
-        console.log(data);
-        console.log(resp);
+        
       },
     });
   }
@@ -105,9 +101,7 @@ class TheServer {
         });
       },
       error: (resp) => {
-        console.log("ERRROORRRR IN LOGGIN IN USER ... ");
-        // console.log(token);
-        console.log(resp);
+        
       },
     });
   }

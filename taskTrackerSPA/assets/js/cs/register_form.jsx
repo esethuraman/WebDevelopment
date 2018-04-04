@@ -15,17 +15,25 @@ function RegisterForm(params) {
       type: 'UPDATE_FORM',
       data: data,
     };
-    console.log(action);
+    
     params.dispatch(action);
   }
 
-  function submit(ev) {
-    console.log("Should create User.");
-    console.log(params);
+  function submit(ev) {    
     let userParams = {name: params.form.name, pass: params.form.pass, email: params.form.email}
-    console.log("SUBMITTT IN REGISTER USER")
-    console.log(userParams);
-    api.submit_user(userParams);
+    if(userParams.name.length == 0){
+      alert("Please enter a name");
+    }
+    else if(userParams.pass.length == 0){
+      alert("Please enter a password");
+    }
+    else if(userParams.email.length == 0){
+      alert("Please enter a mail id");
+    }
+    else{
+      api.submit_user(userParams);  
+    }
+    
   }
 
   
@@ -36,7 +44,7 @@ function RegisterForm(params) {
 
       <FormGroup>
         <Label for="name">User name</Label>
-        <Input type="textarea" name="name"  value={params.form.name} onChange={update}/>
+        <Input type="text" name="name"  value={params.form.name} onChange={update}/>
       </FormGroup>
 
       <FormGroup>
