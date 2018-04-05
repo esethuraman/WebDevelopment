@@ -1,0 +1,32 @@
+My task tracker application is aimed to be a Single page application.
+The UI idea is mainly inspired from Professor Tuk's Microblog application that he
+demonstrated in class. 
+
+On accessing the application URL, the user will be shown a dashboard with options to either
+sign in or register. Clicking on the signin option will allow the user to view the feed that 
+contains all the tasks. In addition to that, a task form is shown where the user can create and
+assign a task.
+
+User access:
+  Users who are not logged in should not be able to see the tasks. For this reason, the task feed is 
+displayed only when the users are logged in. For logout, the user is simply prompted to reload the page.
+  
+Tasks Feed:
+  I chose to display all information about tasks in the feed itself as that would give the user less overhead
+of scrolling through multiple pages.Each task has a Edit and Delete button. The Edit button on clicking 
+would render the task in the form present in the top of the page. For this reason, I have named the task submit 
+button as "Create / Update". This is a dual purpose button hence. For editing tasks, the UPDATTE_TASK event of 
+store is being used as it suits the purpose well. In addition to it, a clea button is provided which when clicked
+will clear the task form fields however retaining the mandatory field such as assigned by user and the like.
+This same functionality is exploited for users on creating a task successfully. A user once created a task would like
+to see the tasks updated in the feed and the task form being available for the next task entry. The former is achieved
+through store dispatch of redux. The latter is achieved through the API that uses clear functionality.
+
+Database design:
+  There are two tables used for this application: users and tasks. users table has three fields - name, emailid
+and password. tasks table has fields such as title, assignee, assigner, minutes_worked in the task, status (completed
+or not), descriptioin about the task. The fields are validated in the front end by ReactJs and only on entering all fields
+in a validated form (such as minutes_worked to be of 15 minutes multiple), the task is allowed to be submitted. 
+
+
+  
